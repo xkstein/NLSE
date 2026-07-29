@@ -1,4 +1,5 @@
-from NLSE import split_step
+from NLSE import split_step_fast, split_step_pyfftw, split_step_mlx
+from scipy.fft import  next_fast_len
 import numpy as np
 import argparse
 
@@ -24,7 +25,7 @@ L_NL = 1 / ( gamma * P_0 )
 assert np.isclose(L_D / L_NL, N ** 2), 'N is not self consistent!'
 
 if args.noplot:
-    t = np.linspace(-80e-12, 80e-12, 50000)
+    t = np.linspace(-80e-12, 80e-12, next_fast_len(50000))
     Z = np.linspace(0, 10*np.pi/2 * L_D, 1024)
 else:
     print('For plotting')
@@ -44,7 +45,7 @@ def nl_operator(A):
 def diff_operator(omega):
     return 1j * beta2 / 2 * omega ** 2
 
-A = split_step(A_0, t, Z, diff_operator, nl_operator)
+A = split_step_mlx(A_0, t, Z, diff_operator, nl_operator)
 
 if not args.noplot:
     import matplotlib.pyplot as plt
