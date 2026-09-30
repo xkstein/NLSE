@@ -45,7 +45,7 @@ class CoupledRings:
         ring_drop_bs = jnp.array([[jnp.sqrt(1 - self.coupling_ring_drop), 1j * jnp.sqrt(self.coupling_ring_drop)], 
                                 [1j * jnp.sqrt(self.coupling_ring_drop), jnp.sqrt(1 - self.coupling_ring_drop)]])
 
-        def run_sim(A_init_main, A_init_aux, Ain, detuning_main, detuning_aux, nrt, n_per_step=2):
+        def run_sim(A_init_main, A_init_aux, Ain, detuning_main, detuning_aux, nrt, n_per_step=2, A_drop_in=None):
             '''
             Returns:
                 Field in main ring
@@ -58,7 +58,11 @@ class CoupledRings:
             _a_init_aux = jnp.array(A_init_aux, dtype=jnp.complex64)
 
             _a_in = jnp.array(Ain, dtype=jnp.complex64)
-            _a_drop_in = jnp.zeros(Ain.shape, dtype=jnp.complex64)
+            
+            if A_drop_in is None:
+                _a_drop_in = jnp.zeros(Ain.shape, dtype=jnp.complex64)
+            else:
+                _a_drop_in = jnp.zeros(A_drop_in, dtype=jnp.complex64)
 
             def nl_operator_main(A):
                 return 1j * self.gamma * jnp.abs(A) ** 2

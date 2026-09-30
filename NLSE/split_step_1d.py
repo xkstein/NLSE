@@ -34,14 +34,14 @@ def split_step(A_0, t, Z, make_differential_operator: callable, make_nonlinear_o
     for ind, A_start in enumerate(A[:-1]):
         A_end = np.copy(A_start)
 
-        N_start = make_nonlinear_operator(A_start)
+        N_start = make_nonlinear_operator(A_start, omega)
         DA_start = np.fft.ifft( differential_operator * Af_start )
 
         for refinement_ind in range(n_integral_iterations):
             if refinement_ind == 0:
                 N_end = N_start
             else:
-                N_end = make_nonlinear_operator(A_end)
+                N_end = make_nonlinear_operator(A_end, omega)
             A_mid = np.exp( dZ / 2 * ( N_start + N_end ) ) * DA_start
             Af_end = differential_operator * np.fft.fft(A_mid)
             A_end = np.fft.ifft( Af_end )
